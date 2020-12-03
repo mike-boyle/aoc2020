@@ -32,24 +32,21 @@ impl FromStr for Line {
 }
 
 fn traverse_slope(input: &[Line], direction: &Direction) -> usize {
-    let mut counter = 0;
-    let mut distance_right = 0;
-    let mut distance_down = 0;
-
-    loop {
-        distance_down += direction.down;
-        distance_right += direction.right;
-        if distance_down >= input.len() {
-            break;
-        }
-        let line = &input[distance_down];
-        let spot = &line.spots[distance_right % line.spots.len()];
-        counter += match spot {
-            Spot::Tree => 1,
-            _ => 0,
-        };
-    }
-    return counter;
+    let input_length = input[0].spots.len();
+    let spot_iter = (0..input_length)
+        .cycle()
+        .skip(direction.right)
+        .step_by(direction.right);
+    input
+        .into_iter()
+        .skip(direction.down)
+        .step_by(direction.down)
+        .zip(spot_iter)
+        .filter(|(line, index)| match line.spots[*index] {
+            Spot::Tree => true,
+            _ => false,
+        })
+        .count()
 }
 
 #[aoc_generator(day3)]
