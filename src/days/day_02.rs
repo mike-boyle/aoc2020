@@ -1,15 +1,11 @@
-use std::str::FromStr;
+use parse_display::{Display, FromStr};
 
-struct PasswordPolicyRange {
-    lower_bound: usize,
-    upper_bound: usize,
-}
-struct PasswordPolicy {
-    range: PasswordPolicyRange,
-    character: char,
-}
+#[derive(Display, FromStr, Debug)]
+#[display("{min}-{max} {letter}: {password}")]
 struct PasswordItem {
-    policy: PasswordPolicy,
+    min: usize,
+    max: usize,
+    letter: char,
     password: String,
 }
 
@@ -17,69 +13,18 @@ use regex::Regex;
 
 use crate::Solution;
 
-#[derive(Debug)]
-struct ParsePasswordItemError {}
-
-impl FromStr for PasswordItem {
-    type Err = ParsePasswordItemError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        lazy_static! {
-            static ref RE: Regex = Regex::new(
-                "^(?P<lower_bound>\\d+)-(?P<upper_bound>\\d+) (?P<character>\\w): (?P<password>\\w+)$"
-            )
-            .unwrap();
-        }
-
-        let captures = RE.captures(s).unwrap();
-
-        return Ok(PasswordItem {
-            password: String::from(captures.name("password").unwrap().as_str()),
-            policy: PasswordPolicy {
-                character: captures
-                    .name("character")
-                    .unwrap()
-                    .as_str()
-                    .chars()
-                    .next()
-                    .unwrap(),
-                range: PasswordPolicyRange {
-                    lower_bound: captures
-                        .name("lower_bound")
-                        .unwrap()
-                        .as_str()
-                        .parse()
-                        .unwrap(),
-                    upper_bound: captures
-                        .name("upper_bound")
-                        .unwrap()
-                        .as_str()
-                        .parse()
-                        .unwrap(),
-                },
-            },
-        });
-    }
-}
-
 impl PasswordItem {
     fn conforms_to_range_policy(&self) -> bool {
-        let count = self
-            .password
-            .chars()
-            .filter(|&c| c == self.policy.character)
-            .count();
-        return count >= self.policy.range.lower_bound && count <= self.policy.range.upper_bound;
+        let count = self.password.chars().filter(|&c| c == self.letter).count();
+        return count >= self.min && count <= self.max;
     }
 
     fn conforms_to_position_policy(&self) -> bool {
         let mut chars = self.password.chars();
-        let a = chars.nth(self.policy.range.lower_bound - 1).unwrap();
-        let b = chars
-            .nth(self.policy.range.upper_bound - self.policy.range.lower_bound - 1)
-            .unwrap();
+        let a = chars.nth(self.min - 1);
+        let b = chars.nth(self.max - self.min - 1);
 
-        return (a == self.policy.character) ^ (b == self.policy.character);
+        return (a == Some(self.letter)) ^ (b == Some(self.letter));
     }
 }
 
