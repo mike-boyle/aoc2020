@@ -1,45 +1,5 @@
-use std::{fmt::Debug, str::FromStr};
+use aoc_runner_derive::aoc_main;
 
-#[macro_use]
-extern crate lazy_static;
-
-use util::read_input;
-
-mod days;
-mod util;
-
-pub trait Solution<TInput>
-where
-    TInput: FromStr,
-    <TInput as FromStr>::Err: Debug,
-{
-    fn day() -> i32;
-
-    fn read_input() -> Vec<TInput> {
-        read_input(Self::day())
-    }
-
-    fn part_one() -> i32 {
-        let input = Self::read_input();
-        return Self::solve_part_one(&input);
-    }
-
-    fn part_two() -> i32 {
-        let input = Self::read_input();
-        return Self::solve_part_two(&input);
-    }
-
-    fn solve() -> String {
-        let part_one = Self::part_one();
-        let part_two = Self::part_two();
-        return format!("Part 1: {}, Part 2: {}", part_one, part_two);
-    }
-
-    fn solve_part_one(input: &Vec<TInput>) -> i32;
-    fn solve_part_two(input: &Vec<TInput>) -> i32;
-}
-
-fn main() {
-    let result = days::day_01::Day::solve();
-    println!("{}", result);
-}
+// This shows an error in rust-analyzer, but it's a false positive
+// (running `cargo aoc` works)
+aoc_main! { lib = aoc2020 }
