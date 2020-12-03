@@ -15,9 +15,9 @@ fn find_numbers_summing(target: i32, count: i32, items: &Vec<i32>) -> Option<i32
     };
 }
 
-pub struct Puzzle {}
+pub struct Day {}
 
-impl Solution<i32> for Puzzle {
+impl Solution<i32> for Day {
     fn day() -> i32 {
         1
     }

@@ -1,5 +1,8 @@
 use std::{fmt::Debug, str::FromStr};
 
+#[macro_use]
+extern crate lazy_static;
+
 use util::read_input;
 
 mod days;
@@ -23,7 +26,7 @@ where
 
     fn part_two() -> i32 {
         let input = Self::read_input();
-        return Self::solve_part_one(&input);
+        return Self::solve_part_two(&input);
     }
 
     fn solve() -> String {
@@ -37,6 +40,6 @@ where
 }
 
 fn main() {
-    let result = days::day_01::Puzzle::solve();
+    let result = days::day_01::Day::solve();
     println!("{}", result);
 }
