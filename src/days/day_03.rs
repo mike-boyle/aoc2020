@@ -42,9 +42,12 @@ fn traverse_slope(input: &[Line], direction: &Direction) -> usize {
         .skip(direction.down)
         .step_by(direction.down)
         .zip(spot_iter)
-        .filter(|(line, index)| match line.spots[*index] {
-            Spot::Tree => true,
-            _ => false,
+        .filter(|(line, index)| {
+            if let Spot::Tree = line.spots[*index] {
+                true
+            } else {
+                false
+            }
         })
         .count()
 }
